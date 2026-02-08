@@ -4,3 +4,24 @@ node_modules
 .package-lock.json
 game.js
 /game
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# Build output
+dist/
+release/
+
+# Windows
+nul
+Thumbs.db
+
+# Env
+.env
+.env.*

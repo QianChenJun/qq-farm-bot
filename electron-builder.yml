@@ -1,0 +1,20 @@
+appId: com.qqfarm.bot
+productName: QQ经典农场助手
+directories:
+  output: release
+files:
+  - electron/**/*
+  - src/**/*
+  - proto/**/*
+  - gameConfig/**/*
+  - dist/renderer/**/*
+  - node_modules/**/*
+  - package.json
+  - client.js
+win:
+  target: nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+asar: true
