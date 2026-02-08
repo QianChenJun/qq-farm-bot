@@ -14,6 +14,9 @@ let isCheckingFarm = false;
 let isFirstFarmCheck = true;
 let farmCheckTimer = null;
 let farmLoopRunning = false;
+let overrideSeedId = 0;  // 外部指定种子ID（0=自动选择）
+
+function setOverrideSeedId(seedId) { overrideSeedId = seedId; }
 
 // ============ 农场 API ============
 
@@ -209,6 +212,11 @@ async function findBestSeed() {
     }
 
     // 按等级要求排序
+    // 如果外部指定了种子ID，优先使用
+    if (overrideSeedId > 0) {
+        const specified = available.find(a => a.seedId === overrideSeedId);
+        if (specified) return specified;
+    }
     // 取最高等级种子: available.sort((a, b) => b.requiredLevel - a.requiredLevel);
     // 暂时改为取最低等级种子 (白萝卜)
     available.sort((a, b) => a.requiredLevel - b.requiredLevel);
@@ -587,4 +595,5 @@ module.exports = {
     checkFarm, startFarmCheckLoop, stopFarmCheckLoop,
     getCurrentPhase,
     setOperationLimitsCallback,
+    setOverrideSeedId,
 };

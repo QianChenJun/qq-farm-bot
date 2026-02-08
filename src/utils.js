@@ -3,6 +3,10 @@
  */
 
 const Long = require('long');
+const EventEmitter = require('events');
+
+// ============ 日志事件发射器（供 Electron UI 监听） ============
+const logEmitter = new EventEmitter();
 
 // ============ 服务器时间状态 ============
 let serverTimeMs = 0;
@@ -50,10 +54,21 @@ function toTimeSec(val) {
 // ============ 日志 ============
 function log(tag, msg) {
     console.log(`[${now()}] [${tag}] ${msg}`);
+    logEmitter.emit('log', { time: now(), category: tagToCategory(tag), level: 'info', message: `[${tag}] ${msg}` });
 }
 
 function logWarn(tag, msg) {
     console.log(`[${now()}] [${tag}] ⚠ ${msg}`);
+    logEmitter.emit('log', { time: now(), category: tagToCategory(tag), level: 'warn', message: `[${tag}] ⚠ ${msg}` });
+}
+
+function tagToCategory(tag) {
+    const t = tag.toLowerCase();
+    if (['农场', '收获', '种植', '施肥', '铲除', '除草', '除虫', '浇水', '巡田'].includes(tag)) return 'farm';
+    if (['好友', '申请', '偷菜'].includes(tag)) return 'friend';
+    if (['任务'].includes(tag)) return 'task';
+    if (['商店', '购买', '仓库', '物品'].includes(tag)) return 'shop';
+    return 'system';
 }
 
 // ============ 异步工具 ============
@@ -65,4 +80,5 @@ module.exports = {
     toLong, toNum, now,
     getServerTimeSec, syncServerTime, toTimeSec,
     log, logWarn, sleep,
+    logEmitter,
 };

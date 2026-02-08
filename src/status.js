@@ -35,11 +35,16 @@ const MAGENTA = `${ESC}[35m`;
 // ============ 状态栏是否启用 ============
 let statusEnabled = false;
 let termRows = 24;
+let isElectron = false;
+
+function setElectronMode(enabled) { isElectron = enabled; }
 
 /**
  * 初始化状态栏
  */
 function initStatusBar() {
+    // Electron 环境下不使用终端状态栏
+    if (isElectron) return false;
     // 检测终端是否支持
     if (!process.stdout.isTTY) {
         return false;
@@ -183,4 +188,5 @@ module.exports = {
     updateStatusGold,
     updateStatusLevel,
     statusData,
+    setElectronMode,
 };
