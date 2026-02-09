@@ -21,8 +21,65 @@ const SHOP_CACHE_TTL = 300000;  // 商店缓存5分钟
 
 function setOverrideSeedId(seedId) { overrideSeedId = seedId; }
 function setPlantStrategy(strategy) { currentStrategy = strategy; }
-function getShopCache() { return shopCache ? shopCache.goodsList : null; }
+function getShopCache() { return shopCache; }
 function clearShopCache() { shopCache = null; }
+
+/**
+ * 确保商店缓存已加载（用于 UI 种植策略显示）
+ */
+async function ensureShopCache() {
+    const SEED_SHOP_ID = 2;
+    const now = Date.now();
+
+    // 如果缓存有效，直接返回
+    if (shopCache && (now - shopCache.timestamp) < SHOP_CACHE_TTL) {
+        return shopCache;
+    }
+
+    // 查询商店并缓存
+    try {
+        const shopReply = await getShopInfo(SEED_SHOP_ID);
+        if (!shopReply.goods_list || shopReply.goods_list.length === 0) {
+            return null;
+        }
+
+        const state = getUserState();
+        const available = [];
+        for (const goods of shopReply.goods_list) {
+            if (!goods.unlocked) continue;
+
+            let meetsConditions = true;
+            let requiredLevel = 0;
+            const conds = goods.conds || [];
+            for (const cond of conds) {
+                if (toNum(cond.type) === 1) {
+                    requiredLevel = toNum(cond.param);
+                    if (state.level < requiredLevel) {
+                        meetsConditions = false;
+                        break;
+                    }
+                }
+            }
+            if (!meetsConditions) continue;
+
+            const limitCount = toNum(goods.limit_count);
+            const boughtNum = toNum(goods.bought_num);
+            if (limitCount > 0 && boughtNum >= limitCount) continue;
+
+            available.push({
+                goodsId: toNum(goods.id),
+                seedId: toNum(goods.item_id),
+                price: toNum(goods.price),
+                requiredLevel,
+            });
+        }
+
+        shopCache = { goodsList: available, timestamp: now };
+        return shopCache;
+    } catch (e) {
+        return null;
+    }
+}
 
 // ============ 农场 API ============
 
@@ -646,4 +703,5 @@ module.exports = {
     setPlantStrategy,
     getShopCache,
     clearShopCache,
+    ensureShopCache,
 };

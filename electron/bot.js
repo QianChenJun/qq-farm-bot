@@ -10,7 +10,7 @@ const EventEmitter = require('events');
 const { CONFIG } = require('../src/config');
 const { loadProto } = require('../src/proto');
 const { connect, cleanup, resetState, getWs, getUserState, networkEvents } = require('../src/network');
-const { startFarmCheckLoop, stopFarmCheckLoop, setOverrideSeedId, setPlantStrategy, getShopCache, clearShopCache } = require('../src/farm');
+const { startFarmCheckLoop, stopFarmCheckLoop, setOverrideSeedId, setPlantStrategy, getShopCache, clearShopCache, ensureShopCache } = require('../src/farm');
 const { startFriendCheckLoop, stopFriendCheckLoop, setFriendFeatures } = require('../src/friend');
 const { initTaskSystem, cleanupTaskSystem } = require('../src/task');
 const { initStatusBar, cleanupStatusBar, setStatusPlatform, statusData, setElectronMode } = require('../src/status');
@@ -264,13 +264,17 @@ function saveConfig(partial) {
 }
 
 // ============ 种植策略 ============
-function getPlantPlan() {
+async function getPlantPlan() {
   const state = getUserState();
   const level = state.level || 1;
   const config = store.get();
   const strategy = config.plantMode === 'manual' ? 'fast' : config.plantMode;
+
+  // 确保商店缓存已加载
+  await ensureShopCache();
   const cache = getShopCache();
   const shopGoodsList = cache ? cache.goodsList : null;
+
   return calculatePlantPlan(level, shopGoodsList, strategy);
 }
 
