@@ -47,6 +47,7 @@
       "package.json"
     ],
     "win": {
+      "icon": "images/favicon.ico",
       "target": [
         {
           "target": "portable",
@@ -57,7 +58,7 @@
       ]
     },
     "portable": {
-      "artifactName": "${productName}-${version}-便携版.exe"
+      "artifactName": "QQFarmBot-${version}-Portable.exe"
     },
     "asar": true
   }
