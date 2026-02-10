@@ -1,6 +1,6 @@
 {
   "name": "qq-farm-bot",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "QQ经典农场助手",
   "license": "MIT",
   "author": "",
@@ -50,7 +50,9 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },
