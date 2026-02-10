@@ -143,14 +143,19 @@ async function insecticide(landIds) {
 
 // 普通肥料 ID
 const NORMAL_FERTILIZER_ID = 1011;
+// 有机肥料 ID
+const ORGANIC_FERTILIZER_ID = 1012;
 
 /**
  * 施肥 - 必须逐块进行，服务器不支持批量
- * 游戏中拖动施肥间隔很短，这里用 50ms
  */
 async function fertilize(landIds, fertilizerId = NORMAL_FERTILIZER_ID) {
     let successCount = 0;
-    for (const landId of landIds) {
+    const startTime = Date.now();
+    const intervalMs = 120;
+
+    for (let i = 0; i < landIds.length; i++) {
+        const landId = landIds[i];
         try {
             const body = types.FertilizeRequest.encode(types.FertilizeRequest.create({
                 land_ids: [toLong(landId)],
@@ -162,7 +167,13 @@ async function fertilize(landIds, fertilizerId = NORMAL_FERTILIZER_ID) {
             // 施肥失败（可能肥料不足），停止继续
             break;
         }
-        if (landIds.length > 1) await sleep(50);  // 50ms 间隔
+
+        if (i < landIds.length - 1) {
+            const elapsed = Date.now() - startTime;
+            const targetTime = (i + 1) * intervalMs;
+            const waitTime = Math.max(30, targetTime - elapsed);
+            await sleep(waitTime);
+        }
     }
     return successCount;
 }
@@ -211,11 +222,15 @@ function encodePlantRequest(seedId, landIds) {
 }
 
 /**
- * 种植 - 游戏中拖动种植间隔很短，这里用 50ms
+ * 种植 - 逐块进行
  */
 async function plantSeeds(seedId, landIds) {
     let successCount = 0;
-    for (const landId of landIds) {
+    const startTime = Date.now();
+    const intervalMs = 100;
+
+    for (let i = 0; i < landIds.length; i++) {
+        const landId = landIds[i];
         try {
             const body = encodePlantRequest(seedId, [landId]);
             const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'Plant', body);
@@ -224,7 +239,13 @@ async function plantSeeds(seedId, landIds) {
         } catch (e) {
             logWarn('种植', `土地#${landId} 失败: ${e.message}`);
         }
-        if (landIds.length > 1) await sleep(50);  // 50ms 间隔
+
+        if (i < landIds.length - 1) {
+            const elapsed = Date.now() - startTime;
+            const targetTime = (i + 1) * intervalMs;
+            const waitTime = Math.max(30, targetTime - elapsed);
+            await sleep(waitTime);
+        }
     }
     return successCount;
 }
@@ -406,11 +427,16 @@ async function autoPlantEmptyLands(deadLandIds, emptyLandIds) {
         logWarn('种植', e.message);
     }
 
-    // 5. 施肥（逐块拖动，间隔50ms）
+    // 5. 双重施肥（先普通肥，再有机肥）
     if (plantedLands.length > 0) {
-        const fertilized = await fertilize(plantedLands);
-        if (fertilized > 0) {
-            log('施肥', `已为 ${fertilized}/${plantedLands.length} 块地施肥`);
+        const fertilized1 = await fertilize(plantedLands, NORMAL_FERTILIZER_ID);
+        if (fertilized1 > 0) {
+            log('施肥', `已为 ${fertilized1}/${plantedLands.length} 块地施普通肥`);
+        }
+
+        const fertilized2 = await fertilize(plantedLands, ORGANIC_FERTILIZER_ID);
+        if (fertilized2 > 0) {
+            log('施肥', `已为 ${fertilized2}/${plantedLands.length} 块地施有机肥`);
         }
     }
 }
@@ -457,7 +483,8 @@ function analyzeLands(lands) {
     const result = {
         harvestable: [], needWater: [], needWeed: [], needBug: [],
         growing: [], empty: [], dead: [],
-        harvestableInfo: [],  // 收获植物的详细信息 { id, name, exp }
+        harvestableInfo: [],
+        nextMatureTime: null,  // 最早成熟时间（秒）
     };
 
     const nowSec = getServerTimeSec();
@@ -544,6 +571,22 @@ function analyzeLands(lands) {
         }
 
         result.growing.push(id);
+
+        // 计算成熟时间
+        if (plant.phases && plant.phases.length > 0) {
+            for (const phase of plant.phases) {
+                if (phase.phase === PlantPhase.MATURE) {
+                    const matureTime = toTimeSec(phase.begin_time);
+                    if (matureTime > nowSec) {
+                        if (!result.nextMatureTime || matureTime < result.nextMatureTime) {
+                            result.nextMatureTime = matureTime;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         if (debug) {
             const needStr = landNeeds.length > 0 ? ` 需要: ${landNeeds.join(',')}` : '';
             console.log(`    → 结果: 生长中(${PHASE_NAMES[phaseVal] || phaseVal})${needStr}`);
@@ -641,21 +684,36 @@ async function checkFarm() {
         if(hasWork) {
             log('农场', `[${statusParts.join(' ')}]${actionStr}${!hasWork ? ' 无需操作' : ''}`)
         }
+
+        // 返回下次成熟时间用于智能巡田间隔
+        return status.nextMatureTime;
     } catch (err) {
         logWarn('巡田', `检查失败: ${err.message}`);
+        return null;
     } finally {
         isCheckingFarm = false;
     }
 }
 
 /**
- * 农场巡查循环 - 本次完成后等待指定秒数再开始下次
+ * 农场巡查循环 - 智能调整巡田间隔
  */
 async function farmCheckLoop() {
     while (farmLoopRunning) {
-        await checkFarm();
+        const nextMatureTime = await checkFarm();
         if (!farmLoopRunning) break;
-        await sleep(CONFIG.farmCheckInterval);
+
+        // 智能计算下次巡田时间
+        let waitTime = CONFIG.farmCheckInterval;
+        if (nextMatureTime) {
+            const nowSec = getServerTimeSec();
+            const timeUntilMature = (nextMatureTime - nowSec) * 1000;
+            if (timeUntilMature > 0 && timeUntilMature < CONFIG.farmCheckInterval) {
+                waitTime = Math.max(500, timeUntilMature + 200);
+            }
+        }
+
+        await sleep(waitTime);
     }
 }
 

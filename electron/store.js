@@ -11,10 +11,11 @@ const CONFIG_FILE = 'config.json';
 
 const DEFAULT_CONFIG = {
   platform: 'qq',
-  farmInterval: 10,
+  farmInterval: 5,
   friendInterval: 1,
   plantMode: 'fast',
   plantSeedId: 0,
+  sellInterval: 300,
   features: {
     autoHarvest: true,
     autoPlant: true,
@@ -26,6 +27,7 @@ const DEFAULT_CONFIG = {
     autoSteal: true,
     friendHelp: true,
     autoTask: true,
+    autoSell: true,
   },
 };
 

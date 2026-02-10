@@ -111,6 +111,8 @@ function botConnect(code, platform) {
 
       // 根据功能开关启动模块
       const features = store.get().features;
+      const config = store.get();
+
       if (features.autoHarvest !== false || features.autoPlant !== false ||
           features.autoWeed !== false || features.autoBug !== false ||
           features.autoWater !== false || features.autoFertilize !== false) {
@@ -121,6 +123,10 @@ function botConnect(code, platform) {
       }
       if (features.autoTask !== false) {
         initTaskSystem();
+      }
+      if (features.autoSell !== false) {
+        const sellInterval = (config.sellInterval || 60) * 1000;
+        startSellLoop(sellInterval);
       }
 
       botEvents.emit('status-update', getStatus());

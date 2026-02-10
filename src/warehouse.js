@@ -8,9 +8,13 @@ const { sendMsgAsync } = require('./network');
 const { toLong, toNum, log, logWarn, sleep } = require('./utils');
 const { getFruitName } = require('./gameConfig');
 
-// 果实 ID 范围：Plant.json 中 fruit.id 为 4xxxx；部分接口可能用 3xxx，两段都视为果实
-const FRUIT_ID_MIN = 3001;
+// 果实 ID 范围
+const FRUIT_ID_MIN = 40001;
 const FRUIT_ID_MAX = 49999;
+
+// 排除种子 ID 范围（避免误售）
+const SEED_ID_MIN = 20000;
+const SEED_ID_MAX = 29999;
 
 // 单次 Sell 请求最多条数，过多可能触发 1000020 参数错误
 const SELL_BATCH_SIZE = 15;
@@ -60,7 +64,19 @@ async function sellAllFruits() {
         for (const item of items) {
             const id = toNum(item.id);
             const count = toNum(item.count);
+            const uid = item.uid ? toNum(item.uid) : 0;
+
+            // 排除种子（种子ID在20000-29999范围）
+            if (id >= SEED_ID_MIN && id <= SEED_ID_MAX) {
+                continue;
+            }
+
             if (id >= FRUIT_ID_MIN && id <= FRUIT_ID_MAX && count > 0) {
+                // 检查 UID 有效性
+                if (uid === 0) {
+                    logWarn('仓库', `跳过无效物品: ID=${id} Count=${count} (UID丢失)`);
+                    continue;
+                }
                 toSell.push(item);
                 names.push(`${getFruitName(id)}x${count}`);
             }
@@ -102,8 +118,16 @@ async function debugSellFruits() {
         for (const item of items) {
             const id = toNum(item.id);
             const count = toNum(item.count);
-            if (id >= FRUIT_ID_MIN && id <= FRUIT_ID_MAX && count > 0)
+            const uid = item.uid ? toNum(item.uid) : 0;
+
+            if (id >= FRUIT_ID_MIN && id <= FRUIT_ID_MAX && count > 0) {
+                // 检查 UID 有效性
+                if (uid === 0) {
+                    logWarn('仓库', `跳过无效物品: ID=${id} Count=${count} (UID丢失)`);
+                    continue;
+                }
                 toSell.push(item);
+            }
         }
 
         if (toSell.length === 0) {

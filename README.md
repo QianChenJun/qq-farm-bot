@@ -14,7 +14,7 @@
 
 支持智能种植策略 · 好友互动 · 任务系统 · 实时日志
 
-[功能特性](#功能特性) · [快速开始](#安装) · [使用文档](#使用方式) · [技术栈](#技术栈)
+[功能特性](#-功能特性) · [快速开始](#-安装) · [使用文档](#-使用方式) · [技术栈](#-技术栈)
 
 </div>
 
@@ -27,22 +27,28 @@
 
 <table>
 <tr>
-<td width="50%">
-<img src="docs/images/首页.png" alt="首页" />
-<p align="center"><b>首页 - 功能开关与种植策略</b></p>
-<p align="center">实时显示农场状态、经验金币，支持独立功能开关和三种种植策略</p>
+<td width="50%" align="center">
+<img src="docs/images/首页.png" alt="首页" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<br/>
+<b>首页 - 功能开关与种植策略</b>
+<br/>
+<sub>实时显示农场状态、经验金币，支持独立功能开关和三种种植策略</sub>
 </td>
-<td width="50%">
-<img src="docs/images/参数配置.png" alt="参数配置" />
-<p align="center"><b>设置页 - 参数配置</b></p>
-<p align="center">自定义巡查间隔、平台选择，查看所有可种植作物效率排行</p>
+<td width="50%" align="center">
+<img src="docs/images/参数配置.png" alt="参数配置" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<br/>
+<b>设置页 - 参数配置</b>
+<br/>
+<sub>自定义巡查间隔、平台选择，查看所有可种植作物效率排行</sub>
 </td>
 </tr>
 <tr>
-<td colspan="2">
-<img src="docs/images/日志.png" alt="日志" />
-<p align="center"><b>日志页 - 实时操作记录</b></p>
-<p align="center">查看所有自动化操作日志，支持按类型筛选和实时滚动</p>
+<td colspan="2" align="center">
+<img src="docs/images/日志.png" alt="日志" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<br/>
+<b>日志页 - 实时操作记录</b>
+<br/>
+<sub>查看所有自动化操作日志，支持按类型筛选和实时滚动</sub>
 </td>
 </tr>
 </table>
@@ -214,10 +220,11 @@ qq-farm-bot/
 
 ## ⚠️ 注意事项
 
-- ⏱️ code 具有时效性，短时间内可复用，过期后需重新从小程序获取
-- 🔐 同一账号同时只能在一个地方登录，启动本工具后小程序端会被踢下线
-- 🌐 建议在稳定的网络环境下运行，断线后需重新获取 code 连接
-- 📚 本项目仅供学习交流使用
+- ⏱️ **Code 时效性**：code 具有时效性，短时间内可复用，过期后需重新从小程序获取
+- 🔐 **单点登录限制**：同一账号同时只能在一个地方登录，启动本工具后小程序端会被踢下线
+- 🔌 **长时间运行**：长时间挂机可能导致连接超时被服务器踢下线，需重新连接
+- 🌐 **网络环境**：建议在稳定的网络环境下运行，断线后需重新获取 code 连接
+- 📚 **免责声明**：本项目仅供学习交流使用，请勿用于商业用途
 
 ## 🛠️ 技术栈
 
@@ -225,33 +232,33 @@ qq-farm-bot/
 <tr>
 <td align="center" width="20%">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="48" height="48" alt="Node.js" />
-<br />Node.js
+<br /><b>Node.js</b>
+<br /><sub>运行时环境</sub>
 </td>
 <td align="center" width="20%">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/electron/electron-original.svg" width="48" height="48" alt="Electron" />
-<br />Electron
+<br /><b>Electron</b>
+<br /><sub>桌面应用框架</sub>
 </td>
 <td align="center" width="20%">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" width="48" height="48" alt="Vue 3" />
-<br />Vue 3
+<br /><b>Vue 3</b>
+<br /><sub>前端框架</sub>
 </td>
 <td align="center" width="20%">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="48" height="48" alt="TypeScript" />
-<br />TypeScript
+<br /><b>TypeScript</b>
+<br /><sub>类型安全</sub>
 </td>
 <td align="center" width="20%">
 <img src="https://element-plus.org/images/element-plus-logo.svg" width="48" height="48" alt="Element Plus" />
-<br />Element Plus
+<br /><b>Element Plus</b>
+<br /><sub>UI 组件库</sub>
 </td>
 </tr>
 </table>
 
-- **运行时**：Node.js >= 16.0.0
-- **桌面框架**：Electron
-- **前端框架**：Vue 3 (Composition API) + TypeScript
-- **UI 组件库**：Element Plus (暗色主题)
-- **构建工具**：Vite + electron-builder
-- **通信协议**：WebSocket + Protocol Buffers
+**核心特性**：Composition API · Vite 构建 · WebSocket + Protocol Buffers · 暗色主题
 
 ## 🤝 贡献
 
