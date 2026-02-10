@@ -24,6 +24,7 @@ async function loadProto() {
         path.join(protoDir, 'notifypb.proto'),
         path.join(protoDir, 'taskpb.proto'),
         path.join(protoDir, 'itempb.proto'),
+        path.join(protoDir, 'mallpb.proto'),
     ], { keepCase: true });
 
     // 网关
@@ -75,6 +76,13 @@ async function loadProto() {
     types.BuyGoodsRequest = root.lookupType('gamepb.shoppb.BuyGoodsRequest');
     types.BuyGoodsReply = root.lookupType('gamepb.shoppb.BuyGoodsReply');
 
+    // 商场
+    types.GetMallListBySlotTypeRequest = root.lookupType('gamepb.mallpb.GetMallListBySlotTypeRequest');
+    types.GetMallListBySlotTypeResponse = root.lookupType('gamepb.mallpb.GetMallListBySlotTypeResponse');
+    types.MallGoods = root.lookupType('gamepb.mallpb.MallGoods');
+    types.PurchaseRequest = root.lookupType('gamepb.mallpb.PurchaseRequest');
+    types.PurchaseResponse = root.lookupType('gamepb.mallpb.PurchaseResponse');
+
     // 好友
     types.GetAllFriendsRequest = root.lookupType('gamepb.friendpb.GetAllRequest');
     types.GetAllFriendsReply = root.lookupType('gamepb.friendpb.GetAllReply');
@@ -114,4 +122,8 @@ function getRoot() {
     return root;
 }
 
-module.exports = { loadProto, types, getRoot };
+function getProtoTypes() {
+    return types;
+}
+
+module.exports = { loadProto, types, getRoot, getProtoTypes };

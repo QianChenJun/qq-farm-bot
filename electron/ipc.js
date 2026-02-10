@@ -4,7 +4,9 @@
  * 将 bot.js 事件推送到渲染进程
  */
 
-const { ipcMain } = require('electron');
+const { ipcMain, shell } = require('electron');
+const fs = require('fs');
+const path = require('path');
 const bot = require('./bot');
 
 let mainWindow = null;
@@ -53,6 +55,30 @@ function registerIPC(win) {
   ipcMain.handle('bot:clear-logs', () => {
     bot.clearLogs();
     return { success: true };
+  });
+
+  ipcMain.handle('shell:openExternal', (_event, url) => {
+    shell.openExternal(url);
+    return { success: true };
+  });
+
+  ipcMain.handle('app:get-donation-images', () => {
+    try {
+      const basePath = path.join(__dirname, '..');
+      const wechatPath = path.join(basePath, 'docs', 'images', '微信.png');
+      const alipayPath = path.join(basePath, 'docs', 'images', '支付宝.png');
+
+      const wechatBase64 = fs.existsSync(wechatPath)
+        ? `data:image/png;base64,${fs.readFileSync(wechatPath).toString('base64')}`
+        : null;
+      const alipayBase64 = fs.existsSync(alipayPath)
+        ? `data:image/png;base64,${fs.readFileSync(alipayPath).toString('base64')}`
+        : null;
+
+      return { wechat: wechatBase64, alipay: alipayBase64 };
+    } catch (e) {
+      return { wechat: null, alipay: null };
+    }
   });
 
   // === 主进程 → 渲染进程推送 ===

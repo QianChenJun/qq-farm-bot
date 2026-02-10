@@ -29,5 +29,34 @@
     "vue": "^3.5.27",
     "vue-router": "^5.0.2",
     "vue-tsc": "^3.2.4"
+  },
+  "build": {
+    "appId": "com.qq-farm-bot",
+    "productName": "QQ经典农场助手",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/**/*",
+      "proto/**/*",
+      "gameConfig/**/*",
+      "src/**/*",
+      "docs/images/微信.png",
+      "docs/images/支付宝.png",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-便携版.exe"
+    },
+    "asar": true
   }
 }

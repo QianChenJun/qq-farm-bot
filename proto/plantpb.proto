@@ -218,8 +218,8 @@ message FertilizeReply {
 
 // --- 放虫 ---
 message PutInsectsRequest {
-    repeated int64 land_ids = 1;
-    int64 host_gid = 2;
+    int64 host_gid = 1;
+    repeated int64 land_ids = 2;
 }
 
 message PutInsectsReply {
@@ -229,8 +229,8 @@ message PutInsectsReply {
 
 // --- 放草 ---
 message PutWeedsRequest {
-    repeated int64 land_ids = 1;
-    int64 host_gid = 2;
+    int64 host_gid = 1;
+    repeated int64 land_ids = 2;
 }
 
 message PutWeedsReply {

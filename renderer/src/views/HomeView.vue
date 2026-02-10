@@ -185,9 +185,12 @@ const friendFeatures = [
   { key: 'friendPatrol', label: '好友巡查', desc: '遍历好友列表进入农场（主开关）', isMaster: true },
   { key: 'autoSteal', label: '自动偷菜', desc: '偷取好友成熟作物（有经验）', indent: true },
   { key: 'friendHelp', label: '帮忙操作', desc: '帮好友除草/除虫/浇水（有经验上限）', indent: true },
+  { key: 'autoPutBadThings', label: '放虫放草', desc: '给好友放虫子和杂草（捣乱操作）', indent: true },
 ]
 const systemFeatures = [
   { key: 'autoTask', label: '自动任务', desc: '自动领取完成的任务奖励' },
+  { key: 'autoSell', label: '自动出售', desc: '定期出售背包中的作物' },
+  { key: 'autoBuyFertilizer', label: '自动购买肥料', desc: '连接后自动购买高级肥料（消耗点券）' },
 ]
 
 async function handleConnect() {

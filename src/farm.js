@@ -709,7 +709,7 @@ async function farmCheckLoop() {
             const nowSec = getServerTimeSec();
             const timeUntilMature = (nextMatureTime - nowSec) * 1000;
             if (timeUntilMature > 0 && timeUntilMature < CONFIG.farmCheckInterval) {
-                waitTime = Math.max(500, timeUntilMature + 200);
+                waitTime = Math.max(200, timeUntilMature);
             }
         }
 

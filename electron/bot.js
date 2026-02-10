@@ -18,6 +18,7 @@ const { startSellLoop, stopSellLoop } = require('../src/warehouse');
 const { processInviteCodes } = require('../src/invite');
 const { logEmitter } = require('../src/utils');
 const { getLevelExpProgress } = require('../src/gameConfig');
+const { buyFreeGifts, buyFertilizer } = require('../src/mall');
 
 // 新增模块
 const store = require('./store');
@@ -30,6 +31,7 @@ let isConnecting = false;
 let protoLoaded = false;
 let logs = [];
 const MAX_LOGS = 1000;
+let projectInfoTimer = null;
 
 // ============ 初始化 ============
 async function init() {
@@ -57,6 +59,7 @@ async function init() {
 
   // 监听被踢下线事件，自动断开清理
   networkEvents.on('kicked', () => {
+    stopProjectInfoTimer();
     stopFarmCheckLoop();
     stopFriendCheckLoop();
     cleanupTaskSystem();
@@ -84,6 +87,32 @@ async function init() {
   setFriendFeatures(config.features);
 }
 
+// ============ 项目信息定期输出 ============
+function startProjectInfoTimer() {
+  if (projectInfoTimer) clearInterval(projectInfoTimer);
+
+  const outputProjectInfo = () => {
+    logEmitter.emit('log', {
+      type: 'system',
+      message: '📢 本项目完全开源免费 | GitHub: github.com/QianChenJun/qq-farm-bot | 付费购买请退款',
+      timestamp: Date.now(),
+    });
+  };
+
+  // 立即输出一次
+  outputProjectInfo();
+
+  // 每30分钟输出一次
+  projectInfoTimer = setInterval(outputProjectInfo, 30 * 60 * 1000);
+}
+
+function stopProjectInfoTimer() {
+  if (projectInfoTimer) {
+    clearInterval(projectInfoTimer);
+    projectInfoTimer = null;
+  }
+}
+
 // ============ 连接 ============
 function botConnect(code, platform) {
   return new Promise((resolve) => {
@@ -106,12 +135,24 @@ function botConnect(code, platform) {
       isConnected = true;
       isConnecting = false;
 
-      // 处理邀请码
+      startProjectInfoTimer();
+
       await processInviteCodes();
 
-      // 根据功能开关启动模块
       const features = store.get().features;
       const config = store.get();
+
+      try {
+        await buyFreeGifts();
+      } catch (e) {
+      }
+
+      if (features.autoBuyFertilizer !== false) {
+        try {
+          await buyFertilizer();
+        } catch (e) {
+        }
+      }
 
       if (features.autoHarvest !== false || features.autoPlant !== false ||
           features.autoWeed !== false || features.autoBug !== false ||
@@ -171,6 +212,7 @@ function botConnect(code, platform) {
 
 // ============ 断开 ============
 function botDisconnect() {
+  stopProjectInfoTimer();
   stopFarmCheckLoop();
   stopFriendCheckLoop();
   cleanupTaskSystem();
@@ -264,6 +306,12 @@ function saveConfig(partial) {
     if (config.plantMode === 'fast' || config.plantMode === 'advanced') {
       setPlantStrategy(config.plantMode);
     }
+  }
+
+  // 实时应用功能开关
+  if (partial.features !== undefined) {
+    setFriendFeatures(config.features);
+    setFarmFeatures(config.features);
   }
 
   return { success: true };

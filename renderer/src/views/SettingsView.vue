@@ -42,21 +42,65 @@
       </el-table>
       <div v-if="!plantPlan" class="empty-hint">登录后查看种植效率排行</div>
     </div>
+
+    <!-- 关于项目 -->
+    <div class="section">
+      <div class="section-title">关于项目</div>
+      <div class="about-content">
+        <p class="about-text">
+          <strong>QQ经典农场助手</strong> 是一个完全开源免费的项目
+        </p>
+        <p class="about-warning">
+          ⚠️ 如果你是付费购买的，说明你被骗了！
+        </p>
+        <p class="about-warning">
+          请立即申请退款并举报卖家！
+        </p>
+        <div class="about-actions">
+          <el-button type="primary" size="small" @click="handleOpenAbout">
+            查看完整声明
+          </el-button>
+          <el-button size="small" @click="handleOpenGithub">
+            访问 GitHub
+          </el-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 赞赏支持 -->
+    <div class="section">
+      <div class="section-title">💖 赞赏支持</div>
+      <div class="donation-content">
+        <p class="donation-text">如果这个项目对你有帮助，欢迎请作者喝杯咖啡 ☕</p>
+        <div class="donation-images" v-if="donationImages.wechat || donationImages.alipay">
+          <div class="donation-item" v-if="donationImages.wechat">
+            <img :src="donationImages.wechat" alt="微信赞赏码" class="qr-code" />
+            <div class="donation-label">微信赞赏</div>
+          </div>
+          <div class="donation-item" v-if="donationImages.alipay">
+            <img :src="donationImages.alipay" alt="支付宝赞赏码" class="qr-code" />
+            <div class="donation-label">支付宝赞赏</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, inject } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useBot } from '@/composables/useBot'
 import type { PlantPlanResult } from '@/types'
 
 const { status, getConfig, saveConfig, getPlantPlan } = useBot()
+const openSplash = inject<() => void>('openSplash')
 
 const farmInterval = ref(10)
 const friendInterval = ref(1)
 const saving = ref(false)
 const plantPlan = ref<PlantPlanResult | null>(null)
+const donationImages = ref<{ wechat: string | null; alipay: string | null }>({ wechat: null, alipay: null })
 
 function rowClassName({ row }: { row: { rank: number } }) {
   return row.rank === 1 ? 'recommend-row' : ''
@@ -84,7 +128,27 @@ async function loadData() {
   }
 }
 
-onMounted(loadData)
+async function loadDonationImages() {
+  try {
+    const images = await window.electronAPI?.invoke('app:get-donation-images')
+    if (images) {
+      donationImages.value = images
+    }
+  } catch { /* ignore */ }
+}
+
+function handleOpenAbout() {
+  openSplash?.()
+}
+
+function handleOpenGithub() {
+  window.electronAPI?.invoke('shell:openExternal', 'https://github.com/QianChenJun/qq-farm-bot')
+}
+
+onMounted(() => {
+  loadData()
+  loadDonationImages()
+})
 
 watch(() => status.connected, (val) => {
   if (val) loadData()
@@ -158,5 +222,70 @@ watch(() => status.connected, (val) => {
 .empty-hint {
   color: var(--color-text-secondary);
   font-size: 13px;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-text {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.about-warning {
+  font-size: 13px;
+  color: #ff6b6b;
+  font-weight: bold;
+  margin: 0;
+}
+
+.about-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.donation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.donation-text {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.donation-images {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.donation-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.qr-code {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+  border: 2px solid var(--color-border);
+}
+
+.donation-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-text-primary);
 }
 </style>

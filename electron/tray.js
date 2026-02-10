@@ -3,7 +3,7 @@
  * 提供托盘图标、右键菜单
  */
 
-const { Tray, Menu, nativeImage, app } = require('electron');
+const { Tray, Menu, nativeImage, app, shell } = require('electron');
 const path = require('path');
 
 let tray = null;
@@ -28,6 +28,17 @@ function createTray(mainWindow) {
         mainWindow.show();
         mainWindow.focus();
       },
+    },
+    { type: 'separator' },
+    {
+      label: '⭐ GitHub项目（开源免费）',
+      click: () => {
+        shell.openExternal('https://github.com/QianChenJun/qq-farm-bot');
+      },
+    },
+    {
+      label: '⚠️ 付费购买请退款',
+      enabled: false,
     },
     { type: 'separator' },
     {

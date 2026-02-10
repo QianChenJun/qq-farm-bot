@@ -28,6 +28,8 @@ const DEFAULT_CONFIG = {
     friendHelp: true,
     autoTask: true,
     autoSell: true,
+    autoPutBadThings: true,
+    autoBuyFertilizer: false,
   },
 };
 

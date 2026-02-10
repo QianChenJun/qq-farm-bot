@@ -37,16 +37,19 @@ const OP_NAMES = {
 // 配置: 是否只在有经验时才帮助好友
 const HELP_ONLY_WITH_EXP = true;
 
-// 配置: 是否启用放虫放草功能
-const ENABLE_PUT_BAD_THINGS = false;  // 暂时关闭放虫放草功能
-
 // 功能开关（由 bot.js 通过 setter 控制）
 let enableSteal = true;
 let enableHelp = true;
+let enablePutBadThings = true;
+
+// 今日帮助经验获取状态（通过实际经验变化判断）
+let canGetHelpExp = true;
+let lastHelpExpCheck = 0;
 
 function setFriendFeatures(features) {
     if (features.autoSteal !== undefined) enableSteal = features.autoSteal !== false;
     if (features.friendHelp !== undefined) enableHelp = features.friendHelp !== false;
+    if (features.autoPutBadThings !== undefined) enablePutBadThings = features.autoPutBadThings !== false;
 }
 
 // ============ 好友 API ============
@@ -101,6 +104,7 @@ function checkDailyReset() {
             log('系统', '跨日重置，清空操作限制缓存');
         }
         operationLimits.clear();
+        canGetHelpExp = true;  // 重置帮助经验状态
         lastResetDate = today;
     }
 }
@@ -127,12 +131,19 @@ function updateOperationLimits(limits) {
 
 /**
  * 检查某操作是否还能获得经验
+ * 改为基于实际经验变化判断，不依赖服务器返回的limit
  */
 function canGetExp(opId) {
-    const limit = operationLimits.get(opId);
-    if (!limit) return false;  // 没有限制信息，保守起见不帮助（等待农场检查获取限制）
-    if (limit.dayExpTimesLimit <= 0) return true;  // 没有经验上限
-    return limit.dayExpTimes < limit.dayExpTimesLimit;
+    // 只在启用"仅经验时帮助"时才判断，否则始终允许
+    if (!HELP_ONLY_WITH_EXP) return true;
+
+    // 除草/除虫/浇水 都用同一个经验状态判断
+    if (opId === 10005 || opId === 10006 || opId === 10007) {
+        return canGetHelpExp;
+    }
+
+    // 其他操作（偷菜等）不受此限制
+    return true;
 }
 
 /**
@@ -181,6 +192,7 @@ function getOperationLimitsSummary() {
 }
 
 async function helpWater(friendGid, landIds) {
+    const prevExp = getUserState().exp;
     const body = types.WaterLandRequest.encode(types.WaterLandRequest.create({
         land_ids: landIds,
         host_gid: toLong(friendGid),
@@ -188,10 +200,20 @@ async function helpWater(friendGid, landIds) {
     const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'WaterLand', body);
     const reply = types.WaterLandReply.decode(replyBody);
     updateOperationLimits(reply.operation_limits);
+
+    // 检查是否获得经验（等待200ms让服务器推送到达）
+    await sleep(200);
+    const nowExp = getUserState().exp;
+    if (canGetHelpExp && nowExp === prevExp) {
+        canGetHelpExp = false;
+        log('好友', '今日帮助经验已达上限，停止帮助操作');
+    }
+
     return reply;
 }
 
 async function helpWeed(friendGid, landIds) {
+    const prevExp = getUserState().exp;
     const body = types.WeedOutRequest.encode(types.WeedOutRequest.create({
         land_ids: landIds,
         host_gid: toLong(friendGid),
@@ -199,10 +221,20 @@ async function helpWeed(friendGid, landIds) {
     const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'WeedOut', body);
     const reply = types.WeedOutReply.decode(replyBody);
     updateOperationLimits(reply.operation_limits);
+
+    // 检查是否获得经验
+    await sleep(200);
+    const nowExp = getUserState().exp;
+    if (canGetHelpExp && nowExp === prevExp) {
+        canGetHelpExp = false;
+        log('好友', '今日帮助经验已达上限，停止帮助操作');
+    }
+
     return reply;
 }
 
 async function helpInsecticide(friendGid, landIds) {
+    const prevExp = getUserState().exp;
     const body = types.InsecticideRequest.encode(types.InsecticideRequest.create({
         land_ids: landIds,
         host_gid: toLong(friendGid),
@@ -210,6 +242,15 @@ async function helpInsecticide(friendGid, landIds) {
     const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'Insecticide', body);
     const reply = types.InsecticideReply.decode(replyBody);
     updateOperationLimits(reply.operation_limits);
+
+    // 检查是否获得经验
+    await sleep(200);
+    const nowExp = getUserState().exp;
+    if (canGetHelpExp && nowExp === prevExp) {
+        canGetHelpExp = false;
+        log('好友', '今日帮助经验已达上限，停止帮助操作');
+    }
+
     return reply;
 }
 
@@ -227,8 +268,8 @@ async function stealHarvest(friendGid, landIds) {
 
 async function putInsects(friendGid, landIds) {
     const body = types.PutInsectsRequest.encode(types.PutInsectsRequest.create({
-        land_ids: landIds,
         host_gid: toLong(friendGid),
+        land_ids: landIds,
     })).finish();
     const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'PutInsects', body);
     const reply = types.PutInsectsReply.decode(replyBody);
@@ -238,8 +279,8 @@ async function putInsects(friendGid, landIds) {
 
 async function putWeeds(friendGid, landIds) {
     const body = types.PutWeedsRequest.encode(types.PutWeedsRequest.create({
-        land_ids: landIds,
         host_gid: toLong(friendGid),
+        land_ids: landIds,
     })).finish();
     const { body: replyBody } = await sendMsgAsync('gamepb.plantpb.PlantService', 'PutWeeds', body);
     const reply = types.PutWeedsReply.decode(replyBody);
@@ -307,17 +348,15 @@ function analyzeFriendLands(lands, myGid, friendName = '') {
         if (plant.insect_owners && plant.insect_owners.length > 0) result.needBug.push(id);
 
         // 捣乱操作: 检查是否可以放草/放虫
-        // 条件: 没有草且我没放过草
         const weedOwners = plant.weed_owners || [];
         const insectOwners = plant.insect_owners || [];
-        const iAlreadyPutWeed = weedOwners.some(gid => toNum(gid) === myGid);
-        const iAlreadyPutBug = insectOwners.some(gid => toNum(gid) === myGid);
 
-        // 每块地最多2个草/虫，且我没放过
-        if (weedOwners.length < 2 && !iAlreadyPutWeed) {
+        // 只在没有草/虫时才放（避免达到上限）
+        // 成熟或枯萎阶段不能放草，所以排除这些状态
+        if (weedOwners.length === 0 && phaseVal !== PlantPhase.MATURE && phaseVal !== PlantPhase.DEAD) {
             result.canPutWeed.push(id);
         }
-        if (insectOwners.length < 2 && !iAlreadyPutBug) {
+        if (insectOwners.length === 0) {
             result.canPutBug.push(id);
         }
     }
@@ -352,7 +391,7 @@ async function visitFriend(friend, totalActions, myGid) {
     }
 
     const status = analyzeFriendLands(lands, myGid, name);
-    
+
     if (showDebug) {
         console.log(`  [${name}] 分析结果: 可偷=${status.stealable.length} 浇水=${status.needWater.length} 除草=${status.needWeed.length} 除虫=${status.needBug.length}`);
         console.log(`========== 调试结束 ==========\n`);
@@ -421,25 +460,63 @@ async function visitFriend(friend, totalActions, myGid) {
     }
 
     // 捣乱操作: 放虫(10004)/放草(10003)
-    if (ENABLE_PUT_BAD_THINGS && status.canPutBug.length > 0 && canOperate(10004)) {
+    if (enablePutBadThings && status.canPutBug.length > 0 && canOperate(10004)) {
         let ok = 0;
         const remaining = getRemainingTimes(10004);
         const toProcess = status.canPutBug.slice(0, remaining);
+
         for (const landId of toProcess) {
             if (!canOperate(10004)) break;
-            try { await putInsects(gid, [landId]); ok++; } catch (e) { /* ignore */ }
+            try {
+                await putInsects(gid, [landId]);
+                ok++;
+            } catch (e) {
+                // 检查是否是操作次数上限
+                if (e.message && e.message.includes('1001046')) {
+                    // 操作次数已达上限，停止继续操作
+                    break;
+                }
+                // 忽略其他正常的业务错误（虫子上限、未种植、成熟/枯萎）
+                const isNormalError = e.message && (
+                    e.message.includes('1001039') ||  // 虫子数量已达上限
+                    e.message.includes('1001011') ||  // 土地未种植
+                    e.message.includes('1001034')     // 成熟或枯萎阶段
+                );
+                if (!isNormalError) {
+                    logWarn('放虫', `失败: ${e.message}`);
+                }
+            }
             await sleep(100);
         }
         if (ok > 0) { actions.push(`放虫${ok}`); totalActions.putBug += ok; }
     }
 
-    if (ENABLE_PUT_BAD_THINGS && status.canPutWeed.length > 0 && canOperate(10003)) {
+    if (enablePutBadThings && status.canPutWeed.length > 0 && canOperate(10003)) {
         let ok = 0;
         const remaining = getRemainingTimes(10003);
         const toProcess = status.canPutWeed.slice(0, remaining);
+
         for (const landId of toProcess) {
             if (!canOperate(10003)) break;
-            try { await putWeeds(gid, [landId]); ok++; } catch (e) { /* ignore */ }
+            try {
+                await putWeeds(gid, [landId]);
+                ok++;
+            } catch (e) {
+                // 检查是否是操作次数上限
+                if (e.message && e.message.includes('1001046')) {
+                    // 操作次数已达上限，停止继续操作
+                    break;
+                }
+                // 忽略其他正常的业务错误（草数量上限、未种植、成熟/枯萎）
+                const isNormalError = e.message && (
+                    e.message.includes('1001036') ||  // 野草次数达到上限
+                    e.message.includes('1001011') ||  // 土地未种植
+                    e.message.includes('1001034')     // 成熟或枯萎阶段不能放草
+                );
+                if (!isNormalError) {
+                    logWarn('放草', `失败: ${e.message}`);
+                }
+            }
             await sleep(100);
         }
         if (ok > 0) { actions.push(`放草${ok}`); totalActions.putWeed += ok; }
@@ -502,7 +579,7 @@ async function checkFriends() {
                 if (showDebug) {
                     console.log(`[调试] 好友 [${name}] 加入优先列表 (位置: ${priorityFriends.length})`);
                 }
-            } else if (ENABLE_PUT_BAD_THINGS && canPutBugOrWeed) {
+            } else if (enablePutBadThings && canPutBugOrWeed) {
                 // 没有预览信息但可以放虫放草（仅在开启放虫放草功能时）
                 otherFriends.push({ gid, name });
                 visitedGids.add(gid);
