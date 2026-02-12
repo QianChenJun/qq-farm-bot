@@ -84,3 +84,13 @@
 如果你觉得项目有帮助，欢迎点一个 Star。
 
 </div>
+
+---
+
+<div align="center">
+
+### 📊 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=QianChenJun/qq-farm-bot&type=Date)](https://star-history.com/#QianChenJun/qq-farm-bot&Date)
+
+</div>
