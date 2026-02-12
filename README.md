@@ -16,11 +16,12 @@
 
 [功能特性](#-功能特性) · [快速开始](#-安装) · [使用文档](#-使用方式) · [技术栈](#️-技术栈)
 
-> [!WARNING]
-> **维护状态说明**
-> - 本仓库不再维护源码，仅用于发布安装包。
-> - 后续新版本请在 **Releases** 页面下载，不再通过仓库代码更新。
-> - 最新版本下载入口：`https://github.com/QianChenJun/qq-farm-bot/releases`
+## ⚠️ 仓库状态：仅发布，不维护源码
+
+**请勿基于此仓库代码进行二次开发。**  
+后续版本只通过 Release 分发，请直接下载最新版：
+
+[![下载最新版](https://img.shields.io/badge/Releases-%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88-red?style=for-the-badge)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 </div>
 
