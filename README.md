@@ -7,8 +7,6 @@
 [![Electron](https://img.shields.io/badge/electron-latest-47848F.svg)](https://www.electronjs.org/)
 [![Vue](https://img.shields.io/badge/vue-3.x-4FC08D.svg)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
-[![Releases](https://img.shields.io/github/v/release/QianChenJun/qq-farm-bot?display_name=tag)](https://github.com/QianChenJun/qq-farm-bot/releases)
-[![Downloads](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 **基于 Electron + Vue 3 的 QQ/微信经典农场小程序自动化桌面应用**
 
@@ -23,6 +21,7 @@
 请通过 Releases 获取最新版本：
 
 [![下载最新版](https://img.shields.io/badge/Releases-%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88-red?style=for-the-badge)](https://github.com/QianChenJun/qq-farm-bot/releases)
+[![下载总量](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total?style=for-the-badge&label=Downloads)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 </div>
 
@@ -35,37 +34,28 @@
 
 <table>
 <tr>
-<td width="33%" align="center">
+<td width="50%" align="center">
 <img src="docs/images/首页.png" alt="首页" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
 <br/>
-<b>首页 - 功能总览</b>
-</td>
-<td width="33%" align="center">
-<img src="docs/images/土地.png" alt="土地" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<b>首页 - 功能开关与种植策略</b>
 <br/>
-<b>土地页 - 农场状态与统计</b>
+<sub>实时显示农场状态、经验金币，支持独立功能开关和三种种植策略</sub>
 </td>
-<td width="33%" align="center">
-<img src="docs/images/好友.png" alt="好友" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<td width="50%" align="center">
+<img src="docs/images/参数配置.png" alt="参数配置" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
 <br/>
-<b>好友页 - 巡查与互动</b>
+<b>设置页 - 参数配置</b>
+<br/>
+<sub>自定义巡查间隔、平台选择，查看所有可种植作物效率排行</sub>
 </td>
 </tr>
 <tr>
-<td width="33%" align="center">
-<img src="docs/images/背包.png" alt="背包" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
-<br/>
-<b>背包页 - 果实/种子/道具</b>
-</td>
-<td width="33%" align="center">
-<img src="docs/images/设置.png" alt="设置" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
-<br/>
-<b>设置页 - 参数配置</b>
-</td>
-<td width="33%" align="center">
+<td colspan="2" align="center">
 <img src="docs/images/日志.png" alt="日志" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
 <br/>
 <b>日志页 - 实时操作记录</b>
+<br/>
+<sub>查看所有自动化操作日志，支持按类型筛选和实时滚动</sub>
 </td>
 </tr>
 </table>
