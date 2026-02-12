@@ -7,6 +7,8 @@
 [![Electron](https://img.shields.io/badge/electron-latest-47848F.svg)](https://www.electronjs.org/)
 [![Vue](https://img.shields.io/badge/vue-3.x-4FC08D.svg)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
+[![Releases](https://img.shields.io/github/v/release/QianChenJun/qq-farm-bot?display_name=tag)](https://github.com/QianChenJun/qq-farm-bot/releases)
+[![Downloads](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 **基于 Electron + Vue 3 的 QQ/微信经典农场小程序自动化桌面应用**
 
@@ -16,10 +18,11 @@
 
 [功能特性](#-功能特性) · [快速开始](#-安装) · [使用文档](#-使用方式) · [技术栈](#️-技术栈)
 
-> [!IMPORTANT]
-> **维护状态说明（请先阅读）**
-> - 本仓库不再维护源码，仅用于发布安装包与版本说明。
-> - 后续新版本请仅通过 **Releases** 下载：<https://github.com/QianChenJun/qq-farm-bot/releases>
+### 📦 发布状态
+本仓库仅用于发布安装包与版本说明，不再维护源码。  
+请通过 Releases 获取最新版本：
+
+[![下载最新版](https://img.shields.io/badge/Releases-%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88-red?style=for-the-badge)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 </div>
 
