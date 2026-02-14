@@ -3,298 +3,161 @@
 # QQ经典农场助手
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Electron](https://img.shields.io/badge/electron-latest-47848F.svg)](https://www.electronjs.org/)
-[![Vue](https://img.shields.io/badge/vue-3.x-4FC08D.svg)](https://vuejs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
+[![Release](https://img.shields.io/github/v/release/QianChenJun/qq-farm-bot)](https://github.com/QianChenJun/qq-farm-bot/releases)
+[![Downloads](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
-**基于 Electron + Vue 3 的 QQ/微信经典农场小程序自动化桌面应用**
+QQ/微信经典农场自动化桌面助手
 
-通过分析小程序 WebSocket 通信协议（Protocol Buffers），实现全自动农场管理
+支持智能种植、好友巡查、任务礼包、背包处理、实时状态与日志。
 
-支持智能种植策略 · 好友互动 · 任务系统 · 实时日志
-
-[功能特性](#-功能特性) · [快速开始](#-安装) · [使用文档](#-使用方式) · [技术栈](#️-技术栈)
-
-### 📦 发布状态
-本仓库仅用于发布安装包与版本说明，不再维护源码。  
-请通过 Releases 获取最新版本：
-
-[![下载最新版](https://img.shields.io/badge/Releases-%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E7%89%88-red?style=for-the-badge)](https://github.com/QianChenJun/qq-farm-bot/releases)
-[![下载总量](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total?style=for-the-badge&label=Downloads)](https://github.com/QianChenJun/qq-farm-bot/releases)
+[下载使用](#下载) · [功能特性](#功能特性) · [常见问题](#常见问题) · [致谢](#致谢)
 
 </div>
 
 ---
 
-> **💡 项目说明**
-> 本项目基于 [linguo2625469/qq-farm-bot](https://github.com/linguo2625469/qq-farm-bot) 进行重构和功能增强，从 CLI 脚本升级为 Electron 桌面应用，新增 Vue 3 可视化界面、多种植策略、实时状态更新等功能。
+## 发布说明
 
-## 📸 应用截图
+本仓库是发布仓库（Public），主要用于：
+
+- 发布安装包（Releases）
+- 对外说明与使用文档
+- 问题反馈与版本更新记录
+
+源码不在本仓库公开维护；每次版本迭代后，本说明会同步更新用户可见功能。
+
+## 功能特性
+
+### 自己农场
+
+- 自动收获、自动铲除、自动补种
+- 自动解锁土地与土地升级（红土地/金土地）
+- 智能种植策略
+  - 快速升级
+  - 高级作物
+  - 手动选择（记忆上次手动种子）
+- 自动施肥体系
+  - 普通肥开关
+  - 高级肥开关
+  - 高级肥连续施肥
+  - 高级肥防偷（临近成熟窗口补施）
+- 自动除草、除虫、浇水
+
+### 好友农场
+
+- 自动巡查好友
+- 自动偷菜
+- 自动帮忙（浇水/除草/除虫）
+- 放虫放草（可开关，支持次数统计与上限自动停用）
+- 跨天自动恢复每日次数类功能
+
+### 任务与礼包
+
+- 自动领取任务奖励
+- 自动出售背包作物
+- 每日分享礼包
+- 每日会员礼包
+- 开服礼包、月卡礼包
+
+### 桌面体验
+
+- Electron 桌面应用，支持后台运行
+- 实时状态卡片（等级、金币、点券、经验、防偷倒计时）
+- 实时日志
+- 本地二维码生成扫码登录（不依赖在线二维码服务）
+
+## 应用截图
+
+以下截图以实际版本功能为准。
 
 <table>
 <tr>
 <td width="50%" align="center">
-<img src="docs/images/首页.png" alt="首页" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<img src="docs/images/首页.png" alt="首页" style="border-radius: 8px;" />
 <br/>
-<b>首页 - 功能开关与种植策略</b>
-<br/>
-<sub>实时显示农场状态、经验金币，支持独立功能开关和三种种植策略</sub>
+<b>首页 - 功能与状态</b>
 </td>
 <td width="50%" align="center">
-<img src="docs/images/参数配置.png" alt="参数配置" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<img src="docs/images/参数配置.png" alt="参数配置" style="border-radius: 8px;" />
 <br/>
-<b>设置页 - 参数配置</b>
+<b>参数配置 - 策略与间隔</b>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center">
+<img src="docs/images/日志.png" alt="日志" style="border-radius: 8px;" />
 <br/>
-<sub>自定义巡查间隔、平台选择，查看所有可种植作物效率排行</sub>
+<b>日志 - 实时记录</b>
+</td>
+<td width="50%" align="center">
+<img src="docs/images/好友.png" alt="好友" style="border-radius: 8px;" />
+<br/>
+<b>好友 - 巡查与过滤</b>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center">
+<img src="docs/images/土地.png" alt="土地" style="border-radius: 8px;" />
+<br/>
+<b>土地 - 统计与状态</b>
+</td>
+<td width="50%" align="center">
+<img src="docs/images/背包.png" alt="背包" style="border-radius: 8px;" />
+<br/>
+<b>背包 - 出售与道具</b>
 </td>
 </tr>
 <tr>
 <td colspan="2" align="center">
-<img src="docs/images/日志.png" alt="日志" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+<img src="docs/images/设置.png" alt="设置" style="border-radius: 8px;" />
 <br/>
-<b>日志页 - 实时操作记录</b>
-<br/>
-<sub>查看所有自动化操作日志，支持按类型筛选和实时滚动</sub>
+<b>设置 - 全局配置</b>
 </td>
 </tr>
 </table>
 
-## ✨ 功能特性
+## 下载
 
-<table>
-<tr>
-<td width="50%">
+请前往 Releases 下载最新版：
 
-### 🌱 自己农场
-- ✅ **自动收获** — 检测成熟作物并自动收获
-- ✅ **自动铲除** — 自动铲除枯死/收获后的作物残留
-- ✅ **智能种植** — 三种策略可选
-  - 🚀 快速升级（经验效率最优）
-  - 🌟 高级作物（单次经验最高）
-  - 🎯 手动选择（自定义种植）
-- ✅ **自动施肥** — 种植后自动施放普通肥料和有机肥料，容器为空时自动从仓库补充
-- ✅ **自动除草** — 检测并清除杂草
-- ✅ **自动除虫** — 检测并消灭害虫
-- ✅ **自动浇水** — 检测缺水作物并浇水
+- https://github.com/QianChenJun/qq-farm-bot/releases
 
-</td>
-<td width="50%">
+## 登录与使用
 
-### 👥 好友农场
-- ✅ **好友巡查** — 自动巡查好友农场（主开关）
-- ✅ **帮忙操作** — 帮好友浇水/除草/除虫（有经验上限）
-- ✅ **自动偷菜** — 偷取好友成熟作物（有经验）
-- ✅ **放虫放草** — 给好友放虫子和杂草（捣乱操作）
+### 登录方式
 
-### ⚙️ 系统功能
-- ✅ **自动任务** — 自动领取完成的任务奖励
-- ✅ **自动出售** — 定期出售背包中的作物
-- ✅ **商城购买** — 自动购买免费礼包和高级肥料（可选）
-- ✅ **自动同意好友** — 微信同玩好友申请自动同意
-- ✅ **邀请码处理** — 启动时自动处理邀请链接
-- ✅ **实时状态更新** — 经验/金币/等级实时显示
-- ✅ **心跳保活** — 自动维持 WebSocket 连接
+- 应用内扫码登录（推荐）
+- 手动填入 code（如你已有可用 code）
 
-</td>
-</tr>
-</table>
+### 使用步骤
 
-### 🎨 桌面应用特性
+1. 下载并启动应用。
+2. 登录账号（QQ / 微信）。
+3. 在首页按需开启功能。
+4. 在参数配置页调整巡查间隔与策略。
 
-- 🖥️ **现代化界面** — Vue 3 + Element Plus 暗色主题
-- 🎛️ **功能开关** — 每个功能可独立开启/关闭，带详细说明
-- 📊 **实时日志** — 查看所有操作记录，支持筛选
-- ⚡ **配置持久化** — 自动保存配置，下次启动自动应用
-- 🔔 **系统托盘** — 最小化到托盘，后台运行不打扰
-- 🔄 **双平台支持** — QQ 和微信小程序均可使用
+## 常见问题
 
-## 📦 安装
+- 登录失败：`code` 可能过期，请重新获取。
+- 被踢下线：同账号在其他设备登录会触发单点下线。
+- 长时间运行断连：重新连接即可。
+- 功能不执行：先检查开关、账号等级、背包种子、肥料与点券。
 
-### 环境要求
+## 反馈与交流
 
-- Node.js >= 16.0.0
-- npm 或 pnpm
+- Issue：<https://github.com/QianChenJun/qq-farm-bot/issues>
+- QQ 群：796420560
 
-### 克隆仓库
+## 致谢
 
-```bash
-git clone https://github.com/QianChenJun/qq-farm-bot.git
-cd qq-farm-bot
-npm install
-```
+- 原项目与协议研究基础：
+  [linguo2625469/qq-farm-bot](https://github.com/linguo2625469/qq-farm-bot)
+- 扫码登录参考：
+  [lkeme/QRLib](https://github.com/lkeme/QRLib)
 
-## 📚 文档导航
+## 支持项目
 
-项目文档入口：`docs/README.md`
-
-## 🔑 获取登录 Code
-
-本工具需要小程序的登录凭证（code）才能连接服务器。
-
-### 方式一：QQ 扫码登录（推荐）
-
-在应用登录界面点击「扫码登录」按钮，使用 QQ 扫描二维码即可自动获取 code 并连接。
-
-### 方式二：抓包获取
-
-<details>
-<summary><b>📱 抓包方式（Fiddler）</b></summary>
-
-1. 手机安装 Fiddler 证书，配置代理指向电脑
-2. 电脑打开 Fiddler，开启 HTTPS 解密
-3. 手机打开 QQ/微信 → 进入「经典农场」小程序
-4. 在 Fiddler 中筛选请求，找到 WebSocket 连接或登录请求中的 `code` 参数
-5. 复制 code 值，粘贴到本工具中使用
-
-> **💡 提示**：code 具有时效性，短时间内断开重连可复用同一 code，过期后需重新进入小程序获取。
-
-</details>
-
-## 🚀 使用方式
-
-### 方式一：Electron 桌面应用（推荐）
-
-```bash
-# 开发模式
-npm run electron:dev
-
-# 打包为安装程序
-npm run electron:build
-```
-
-打包后在 `release/` 目录生成 `QQFarmBot-x.x.x-Portable.exe`，免安装可直接使用。
-
-**一键发布（自动打 tag + GitHub Actions 发布）**
-
-```bash
-npm run release:patch
-```
-
-完整说明见：`docs/release.md`
-
-**桌面应用提供：**
-- 🎨 可视化操作界面（暗色主题）
-- 🎛️ 功能开关实时切换（带详细说明）
-- 🌱 种植策略配置（快速升级 / 高级作物 / 手动选择）
-- ⏱️ 巡查间隔调整
-- 📋 实时日志查看与筛选
-- 🔔 最小化到系统托盘
-
-### 方式二：CLI 命令行
-
-```bash
-# QQ 小程序登录
-npm run cli -- --code <你的code>
-
-# 微信小程序登录
-npm run cli -- --code <你的code> --wx
-
-# 自定义巡查间隔
-npm run cli -- --code <你的code> --interval 30 --friend-interval 5
-```
-
-**参数说明：**
-
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| `--code` | 小程序登录凭证（必需） | - |
-| `--wx` | 使用微信登录 | QQ |
-| `--interval` | 自己农场巡查间隔（秒） | 1 |
-| `--friend-interval` | 好友农场巡查间隔（秒） | 1 |
-
-## 📁 项目结构
-
-<details>
-<summary><b>点击展开查看详细结构</b></summary>
-
-```
-qq-farm-bot/
-├── electron/          # Electron 主进程模块
-├── renderer/          # Vue 3 前端界面
-├── src/               # 核心业务模块（CLI & Electron 共用）
-├── proto/             # Protobuf 协议定义
-├── gameConfig/        # 游戏配置数据
-└── docs/              # 项目文档
-```
-
-</details>
-
-## ⚙️ 配置说明
-
-### Electron 桌面应用
-
-配置通过界面操作，自动保存到用户数据目录（`%APPDATA%/qq-farm-bot/config.json`）：
-
-- **平台选择**：QQ / 微信
-- **种植模式**：
-  - 🚀 快速升级（经验效率最优，适合快速升级）
-  - 🌟 高级作物（单次经验最高，适合高等级玩家）
-  - 🎯 手动选择（自定义种植作物）
-- **巡查间隔**：自己农场 / 好友农场分别设置
-- **功能开关**：每个自动化功能可独立开启/关闭，带详细说明
-
-### CLI 命令行
-
-通过启动参数配置，详见上方参数说明表。
-
-### 邀请码（仅微信）
-
-在项目根目录的 `share.txt` 中每行放一个邀请链接，启动时自动处理：
-
-```
-?uid=xxx&openid=xxx&share_source=xxx&doc_id=xxx
-```
-
-## ⚠️ 注意事项
-
-- ⏱️ **Code 时效性**：code 具有时效性，短时间内可复用，过期后需重新从小程序获取
-- 🔐 **单点登录限制**：同一账号同时只能在一个地方登录，启动本工具后小程序端会被踢下线
-- 🔌 **长时间运行**：长时间挂机可能导致连接超时被服务器踢下线，需重新连接
-- 🌐 **网络环境**：建议在稳定的网络环境下运行，断线后需重新获取 code 连接
-- 📚 **免责声明**：本项目仅供学习交流使用，请勿用于商业用途
-
-## 🛠️ 技术栈
-
-<table>
-<tr>
-<td align="center" width="20%">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="48" height="48" alt="Node.js" />
-<br /><b>Node.js</b>
-<br /><sub>运行时环境</sub>
-</td>
-<td align="center" width="20%">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/electron/electron-original.svg" width="48" height="48" alt="Electron" />
-<br /><b>Electron</b>
-<br /><sub>桌面应用框架</sub>
-</td>
-<td align="center" width="20%">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" width="48" height="48" alt="Vue 3" />
-<br /><b>Vue 3</b>
-<br /><sub>前端框架</sub>
-</td>
-<td align="center" width="20%">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="48" height="48" alt="TypeScript" />
-<br /><b>TypeScript</b>
-<br /><sub>类型安全</sub>
-</td>
-<td align="center" width="20%">
-<img src="https://element-plus.org/images/element-plus-logo.svg" width="48" height="48" alt="Element Plus" />
-<br /><b>Element Plus</b>
-<br /><sub>UI 组件库</sub>
-</td>
-</tr>
-</table>
-
-**核心特性**：Composition API · Vite 构建 · WebSocket + Protocol Buffers · 暗色主题
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 💖 支持项目
-
-如果这个项目对你有帮助，欢迎请作者喝杯咖啡 ☕
+如果这个项目对你有帮助，欢迎支持作者持续维护。
 
 <div align="center">
 <table>
@@ -313,26 +176,10 @@ qq-farm-bot/
 </table>
 </div>
 
-> ⚠️ **声明**：本项目完全开源免费，如果你是付费购买的，说明你被骗了！请认准官方仓库。
+## 声明
 
-## 📄 License
+本项目开源免费，仅供学习交流，请勿用于商业倒卖。
+
+## License
 
 [MIT](LICENSE)
-
-## 🙏 致谢
-
-本项目基于 [linguo2625469/qq-farm-bot](https://github.com/linguo2625469/qq-farm-bot) 进行重构和功能增强，感谢原作者的开源贡献。
-
-扫码登录功能参考 [lkeme/QRLib](https://github.com/lkeme/QRLib)，感谢作者提供的 QQ 登录实现。
-
----
-
-<div align="center">
-
-### 📊 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=QianChenJun/qq-farm-bot&type=Date)](https://star-history.com/#QianChenJun/qq-farm-bot&Date)
-
-**如果觉得项目不错，请点个 ⭐️ Star 支持一下！**
-
-</div>
