@@ -3,28 +3,29 @@
 # QQ经典农场助手
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/QianChenJun/qq-farm-bot)](https://github.com/QianChenJun/qq-farm-bot/releases)
-[![Downloads](https://img.shields.io/github/downloads/QianChenJun/qq-farm-bot/total)](https://github.com/QianChenJun/qq-farm-bot/releases)
 
 QQ/微信经典农场自动化桌面助手
 
 支持智能种植、好友巡查、任务礼包、背包处理、实时状态与日志。
 
-[下载使用](#下载) · [功能特性](#功能特性) · [常见问题](#常见问题) · [致谢](#致谢)
+[功能特性](#功能特性) · [常见问题](#常见问题) · [致谢](#致谢)
 
 </div>
 
 ---
 
-## 发布说明
+## 紧急通知
+
+本项目已停止维护，不再提供功能更新、问题修复与新版本发布。
+
+## 仓库说明
 
 本仓库是发布仓库（Public），主要用于：
 
-- 发布安装包（Releases）
 - 对外说明与使用文档
-- 问题反馈与版本更新记录
+- 问题反馈记录
 
-源码不在本仓库公开维护；每次版本迭代后，本说明会同步更新用户可见功能。
+源码不在本仓库公开维护。
 
 ## 功能特性
 
@@ -129,12 +130,6 @@ QQ/微信经典农场自动化桌面助手
 </tr>
 </table>
 
-## 下载
-
-请前往 Releases 下载最新版：
-
-- https://github.com/QianChenJun/qq-farm-bot/releases
-
 ## 登录与使用
 
 ### 登录方式
@@ -159,7 +154,6 @@ QQ/微信经典农场自动化桌面助手
 ## 反馈与交流
 
 - Issue：<https://github.com/QianChenJun/qq-farm-bot/issues>
-- QQ 群：796420560
 
 ## 致谢
 
@@ -167,27 +161,6 @@ QQ/微信经典农场自动化桌面助手
   [linguo2625469/qq-farm-bot](https://github.com/linguo2625469/qq-farm-bot)
 - 扫码登录参考：
   [lkeme/QRLib](https://github.com/lkeme/QRLib)
-
-## 支持项目
-
-如果这个项目对你有帮助，欢迎支持作者持续维护。
-
-<div align="center">
-<table>
-<tr>
-<td align="center">
-<img src="docs/images/微信.png" alt="微信赞赏码" width="200"/>
-<br/>
-<b>微信赞赏</b>
-</td>
-<td align="center">
-<img src="docs/images/支付宝.png" alt="支付宝赞赏码" width="200"/>
-<br/>
-<b>支付宝赞赏</b>
-</td>
-</tr>
-</table>
-</div>
 
 ## 声明
 
